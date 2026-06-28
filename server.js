@@ -3,7 +3,7 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Adding historical parameters (?dates=2025) forces ESPN to return real match data during the summer off-season
+// Uses ?dates=2025 to force ESPN to return real match data for testing during the off-season
 const ESPN_URL = "https://api-espn.com";
 
 app.get('/scores', async (req, res) => {
@@ -12,9 +12,9 @@ app.get('/scores', async (req, res) => {
         const events = response.data.events || [];
         let simplifiedGames = {};
 
-        // If there are no games at all, return an empty object instead of crashing
+        // If there are no games at all, return an empty message instead of crashing
         if (events.length === 0) {
-            return res.json({ message: "No active games found for this period." });
+            return res.json({ message: "No games found for this period." });
         }
 
         events.forEach(game => {
@@ -26,7 +26,7 @@ app.get('/scores', async (req, res) => {
             const homeData = competitors.find(c => c.homeAway === 'home');
             const awayData = competitors.find(c => c.homeAway === 'away');
 
-            // Skip this specific game loop entry if team data structure is missing
+            // Skip this specific game if team data structure is missing
             if (!homeData || !awayData) return;
 
             let winner = "None";
@@ -53,3 +53,4 @@ app.get('/scores', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
